@@ -6,6 +6,6 @@ In ordere to use this code, you need to clone this repo, and cloned code represe
 For cloning use command : `git clone https://github.com/aSrki/ProjectYaraROS2`.<br />
 After succesfull clone, run command `colcon build`.<br />
 After succesfull `colcon build`, run command `source install/setup.bash`.<br />
-Finally run command `ros2 launch yara_driver yara_no_rviz.launch.py joystick:=False hardware:=False`.
-ROS2 parameters `joystick` is used if you want to move the arm manually with joystick.
+Finally run command `ros2 launch yara_driver yara_no_rviz.launch.py joystick:=False hardware:=False`.<br />
+ROS2 parameters `joystick` is used if you want to move the arm manually with joystick.<br />
 ROS2 parameters `hardware` is used if you want to run the code on the real hardware of the robot.
