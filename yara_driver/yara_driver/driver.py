@@ -57,16 +57,16 @@ class RobotStatePublisher(Node):
             self._joystick.init()
             self.arm_control_timer = self.create_timer(0.005, self.control_timer_callback)
 
-        # for port, desc, _ in sorted(ports):
-        #         if "STM" in desc:
-        #             try:
-        #                 self.ser = serial.Serial(str(port), 115200)
-        #                 print(f'Successfully opened port: {desc}')
-        #             except Exception as e:
-        #                 print(f'error trying to open port: {e}')
-        #             time.sleep(0.1)
+        for port, desc, _ in sorted(ports):
+                if "STM" in desc:
+                    try:
+                        self.ser = serial.Serial(str(port), 115200)
+                        print(f'Successfully opened port: {desc}')
+                    except Exception as e:
+                        print(f'error trying to open port: {e}')
+                    time.sleep(0.1)
         
-        # self.init_robot_arm()
+        self.init_robot_arm()
         
     def execute_callback(self, goal_handle):
         self.get_logger().info('===============Executing trajectory...===============')
@@ -74,7 +74,7 @@ class RobotStatePublisher(Node):
 
         trajectory = goal_handle.request.trajectory
         final_joint_angles = trajectory.points[-1].positions
-        # self.send_command([g_i - c_i for g_i, c_i in zip(final_joint_angles, self.yara_angles)])
+        self.send_command([g_i - c_i for g_i, c_i in zip(final_joint_angles, self.yara_angles)])
 
         for point in trajectory.points:
             feedback_msg.actual.positions = point.positions            
@@ -82,6 +82,8 @@ class RobotStatePublisher(Node):
             feedback_msg.error.positions = [0.0, 0.0, 0.0, 0.0, 0.0]
             self.fake_yara_angles = point.positions
             goal_handle.publish_feedback(feedback_msg)
+
+        self.yara_angles = trajectory.points[-1].positions
 
         result = FollowJointTrajectory.Result()
         goal_handle.succeed()
@@ -135,6 +137,7 @@ class RobotStatePublisher(Node):
 
         self.ser.write(cmd_msg)
         self.get_logger().info(f"Poslao uglove {"".join([hex(i) for i in cmd_msg])}")
+        self.get_logger().info(f"Poslao uglove {joint_angles[0], math.degrees(joint_angles[1]), math.degrees(joint_angles[2]), math.degrees(joint_angles[3]), math.degrees(joint_angles[4])}")
 
     def control_timer_callback(self):
             axis1 = self._joystick.get_axis(0)
