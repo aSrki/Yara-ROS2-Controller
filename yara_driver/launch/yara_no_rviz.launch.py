@@ -8,40 +8,26 @@ from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description():
     
-    urdf_file_name = 'urdf/yara.urdf'
-    urdf = os.path.join(get_package_share_directory('yara_description'),urdf_file_name)
-    with open(urdf, 'r') as infp:
-        robot_desc = infp.read()
-
-    
     #LAUNCH PARAMS
-    config_use_sim_time = LaunchConfiguration('use_sim_time')
     config_use_joystick = LaunchConfiguration('joystick')
+    config_use_hardware = LaunchConfiguration('hardware')
 
     declare_joystick_arg = DeclareLaunchArgument(
             'joystick',
             default_value='true',
-            description="Argument for customising param.")
-
-    declare_use_sim_time = DeclareLaunchArgument(
-            'use_sim_time',
-            default_value='false',
-            description='YARA Launch')
-
-    #NODES
-    rsp_node = Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[{'use_sim_time': config_use_sim_time, 'robot_description': robot_desc}],
-            arguments=[urdf])
+            description="Argument used to enable/disable joystick control of the robot.")
     
+    declare_hardware_arg = DeclareLaunchArgument(
+            'hadrware',
+            default_value='true',
+            description="Argument used to enable/disable real hardware.")
+
+    #NODES    
     yara_driver_node = Node(
             package='yara_driver',
             executable='yara_driver',
             name='yara_driver_node',
-            parameters=[{"joystick": config_use_joystick}],        
+            parameters=[{"joystick": config_use_joystick}, {"hardware":config_use_hardware}],        
             output='screen')
     
     #LAUNCH FILES
@@ -52,8 +38,8 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        declare_joystick_arg,   
-        declare_use_sim_time,
+        declare_joystick_arg,  
+        declare_hardware_arg,
         yara_driver_node,
         yara_moveit_launch,
     ])

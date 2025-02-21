@@ -8,7 +8,6 @@ import struct
 import time
 import serial.tools.list_ports
 from control_msgs.action import FollowJointTrajectory
-from control_msgs.action import JointTrajectory
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.action import ActionServer
 
@@ -47,8 +46,10 @@ class RobotStatePublisher(Node):
         self.time = 0
 
         self.declare_parameter(name="joystick")
+        self.declare_parameter(name="hardware")
 
         self.use_joystick = self.get_parameter('joystick').get_parameter_value().bool_value
+        self.use_hardware = self.get_parameter('hardware').get_parameter_value().bool_value
 
         if(self.use_joystick):
             pygame.joystick.init()
@@ -56,17 +57,17 @@ class RobotStatePublisher(Node):
             self._joystick = pygame.joystick.Joystick(0)
             self._joystick.init()
             self.arm_control_timer = self.create_timer(0.005, self.control_timer_callback)
-
-        for port, desc, _ in sorted(ports):
-                if "STM" in desc:
-                    try:
-                        self.ser = serial.Serial(str(port), 115200)
-                        print(f'Successfully opened port: {desc}')
-                    except Exception as e:
-                        print(f'error trying to open port: {e}')
-                    time.sleep(0.1)
+        if(self.use_hardware):
+            for port, desc, _ in sorted(ports):
+                    if "STM" in desc:
+                        try:
+                            self.ser = serial.Serial(str(port), 115200)
+                            print(f'Successfully opened port: {desc}')
+                        except Exception as e:
+                            print(f'error trying to open port: {e}')
+                        time.sleep(0.1)
         
-        self.init_robot_arm()
+            self.init_robot_arm()
         
     def execute_callback(self, goal_handle):
         self.get_logger().info('===============Executing trajectory...===============')
@@ -74,7 +75,8 @@ class RobotStatePublisher(Node):
 
         trajectory = goal_handle.request.trajectory
         final_joint_angles = trajectory.points[-1].positions
-        self.send_command([g_i - c_i for g_i, c_i in zip(final_joint_angles, self.yara_angles)])
+        if(self.use_hardware):
+            self.send_command([g_i - c_i for g_i, c_i in zip(final_joint_angles, self.yara_angles)])
 
         for point in trajectory.points:
             feedback_msg.actual.positions = point.positions            
@@ -82,6 +84,7 @@ class RobotStatePublisher(Node):
             feedback_msg.error.positions = [0.0, 0.0, 0.0, 0.0, 0.0]
             self.fake_yara_angles = point.positions
             goal_handle.publish_feedback(feedback_msg)
+            time.sleep(0.05)
 
         self.yara_angles = trajectory.points[-1].positions
 
@@ -154,6 +157,7 @@ class RobotStatePublisher(Node):
                     msg1 = bytearray(struct.pack("<f", 1))
                     self.msg.append(0xAA)
                     self.msg.append(self.joint)
+                    self.fake_yara_angles[0] += math.radians(1)
                     for b in msg1:
                         self.msg.append(b)
                     self.msg_done = True
@@ -161,6 +165,7 @@ class RobotStatePublisher(Node):
                     msg1 = bytearray(struct.pack("<f", -1))
                     self.msg.append(0xAA)
                     self.msg.append(self.joint)
+                    self.fake_yara_angles[0] += math.radians(-1)
                     for b in msg1:
                         self.msg.append(b)
                     self.msg_done = True
@@ -175,6 +180,7 @@ class RobotStatePublisher(Node):
                     msg1 = bytearray(struct.pack("<f", 1))
                     self.msg.append(0xAA)
                     self.msg.append(self.joint)
+                    self.fake_yara_angles[1] += math.radians(1)
                     for b in msg1:
                         self.msg.append(b)
                     self.msg_done = True
@@ -182,6 +188,7 @@ class RobotStatePublisher(Node):
                     msg1 = bytearray(struct.pack("<f", -1))
                     self.msg.append(0xAA)
                     self.msg.append(self.joint)
+                    self.fake_yara_angles[1] += math.radians(-1)
                     for b in msg1:
                         self.msg.append(b)
                     self.msg_done = True
@@ -196,6 +203,7 @@ class RobotStatePublisher(Node):
                     msg1 = bytearray(struct.pack("<f", 1))
                     self.msg.append(0xAA)
                     self.msg.append(self.joint)
+                    self.fake_yara_angles[2] += math.radians(1)
                     for b in msg1:
                         self.msg.append(b)
                     self.msg_done = True
@@ -203,6 +211,7 @@ class RobotStatePublisher(Node):
                     msg1 = bytearray(struct.pack("<f", -1))
                     self.msg.append(0xAA)
                     self.msg.append(self.joint)
+                    self.fake_yara_angles[2] += math.radians(-1)
                     for b in msg1:
                         self.msg.append(b)
                     self.msg_done = True
@@ -217,6 +226,7 @@ class RobotStatePublisher(Node):
                     msg1 = bytearray(struct.pack("<f", 1))
                     self.msg.append(0xAA)
                     self.msg.append(self.joint)
+                    self.fake_yara_angles[3] += math.radians(1)
                     for b in msg1:
                         self.msg.append(b)
                     self.msg_done = True
@@ -224,6 +234,7 @@ class RobotStatePublisher(Node):
                     msg1 = bytearray(struct.pack("<f", -1))
                     self.msg.append(0xAA)
                     self.msg.append(self.joint)
+                    self.fake_yara_angles[3] += math.radians(-1)
                     for b in msg1:
                         self.msg.append(b)
                     self.msg_done = True
@@ -238,6 +249,7 @@ class RobotStatePublisher(Node):
                     msg1 = bytearray(struct.pack("<f", 1))
                     self.msg.append(0xAA)
                     self.msg.append(self.joint)
+                    self.fake_yara_angles[4] += math.radians(1)
                     for b in msg1:
                         self.msg.append(b)
                     self.msg_done = True
@@ -245,6 +257,7 @@ class RobotStatePublisher(Node):
                     msg1 = bytearray(struct.pack("<f", -1))
                     self.msg.append(0xAA)
                     self.msg.append(self.joint)
+                    self.fake_yara_angles[4] += math.radians(-1)
                     for b in msg1:
                         self.msg.append(b)
                     self.msg_done = True
@@ -270,14 +283,6 @@ def main(args=None):
         minimal_publisher.destroy_node()
     finally:
         rclpy.shutdown()
-
-    # executor = rclpy.executors.MultiThreadedExecutor()
-    # my_node = RobotStatePublisher()
-    # executor.add_node(my_node)
-    # try:
-    #     executor.spin()
-    # except KeyboardInterrupt:
-    #     pass
 
 if __name__ == '__main__':
     main()
