@@ -10,6 +10,7 @@ import serial.tools.list_ports
 from control_msgs.action import FollowJointTrajectory
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.action import ActionServer
+import array
 
 class RobotStatePublisher(Node):
 
@@ -42,6 +43,7 @@ class RobotStatePublisher(Node):
         self.msg = bytearray()
         self.joint = 0
         self.msg_done = False
+        self.executing_trajectory = False
 
         self.time = 0
 
@@ -56,7 +58,7 @@ class RobotStatePublisher(Node):
             pygame.init()
             self._joystick = pygame.joystick.Joystick(0)
             self._joystick.init()
-            self.arm_control_timer = self.create_timer(0.005, self.control_timer_callback)
+            self.arm_control_timer = self.create_timer(0.01, self.control_timer_callback)
         if(self.use_hardware):
             for port, desc, _ in sorted(ports):
                     if "STM" in desc:
@@ -71,6 +73,7 @@ class RobotStatePublisher(Node):
         
     def execute_callback(self, goal_handle):
         self.get_logger().info('===============Executing trajectory...===============')
+        self.executing_trajectory = True
         feedback_msg = FollowJointTrajectory.Feedback()
 
         trajectory = goal_handle.request.trajectory
@@ -91,7 +94,7 @@ class RobotStatePublisher(Node):
         result = FollowJointTrajectory.Result()
         goal_handle.succeed()
         result.error_code = 0
-
+        self.executing_trajectory = False
         return result
 
     def init_robot_arm(self):
@@ -143,128 +146,139 @@ class RobotStatePublisher(Node):
         self.get_logger().info(f"Poslao uglove {joint_angles[0], math.degrees(joint_angles[1]), math.degrees(joint_angles[2]), math.degrees(joint_angles[3]), math.degrees(joint_angles[4])}")
 
     def control_timer_callback(self):
-            axis1 = self._joystick.get_axis(0)
-            axis2 = self._joystick.get_axis(1)
-            axis3 = self._joystick.get_axis(4)
-            axis4 = self._joystick.get_axis(3)
-            axis5_cw = self._joystick.get_axis(2)
-            axis5_ccw = self._joystick.get_axis(5)
-            pygame.event.pump()
+        axis1 = self._joystick.get_axis(0)
+        axis2 = self._joystick.get_axis(1)
+        axis3 = self._joystick.get_axis(4)
+        axis4 = self._joystick.get_axis(3)
+        axis5_cw = self._joystick.get_axis(2)
+        axis5_ccw = self._joystick.get_axis(5)
+        pygame.event.pump()
 
-            if axis1 != 0:
-                self.joint = 0xA1
-                if(axis1 > 0.8):
-                    msg1 = bytearray(struct.pack("<f", 1))
-                    self.msg.append(0xAA)
-                    self.msg.append(self.joint)
-                    self.fake_yara_angles[0] += math.radians(1)
-                    for b in msg1:
-                        self.msg.append(b)
-                    self.msg_done = True
-                elif(axis1 < -0.8):
-                    msg1 = bytearray(struct.pack("<f", -1))
-                    self.msg.append(0xAA)
-                    self.msg.append(self.joint)
-                    self.fake_yara_angles[0] += math.radians(-1)
-                    for b in msg1:
-                        self.msg.append(b)
-                    self.msg_done = True
-                if (self.msg_done):
-                    self.ser.write(self.msg)
-                    self.msg = bytearray()
-                    self.msg_done = False
+        if axis1 != 0:
+            self.joint = 0xA1
+            if(axis1 > 0.8):
+                msg1 = bytearray(struct.pack("<f", 1))
+                self.msg.append(0xAA)
+                self.msg.append(self.joint)
+                for b in msg1:
+                    self.msg.append(b)
+                self.msg_done = True
+            elif(axis1 < -0.8):
+                msg1 = bytearray(struct.pack("<f", -1))
+                self.msg.append(0xAA)
+                self.msg.append(self.joint)
+                for b in msg1:
+                    self.msg.append(b)
+                self.msg_done = True
+            if (self.msg_done):
+                self.ser.write(self.msg)
+                self.msg = bytearray()
+                self.msg_done = False
 
-            if axis2 != 0:
-                self.joint = 0xA2
-                if(axis2 > 0.5):
-                    msg1 = bytearray(struct.pack("<f", 1))
-                    self.msg.append(0xAA)
-                    self.msg.append(self.joint)
-                    self.fake_yara_angles[1] += math.radians(1)
-                    for b in msg1:
-                        self.msg.append(b)
-                    self.msg_done = True
-                elif(axis2 < -0.5):
-                    msg1 = bytearray(struct.pack("<f", -1))
-                    self.msg.append(0xAA)
-                    self.msg.append(self.joint)
-                    self.fake_yara_angles[1] += math.radians(-1)
-                    for b in msg1:
-                        self.msg.append(b)
-                    self.msg_done = True
-                if (self.msg_done):
-                    self.ser.write(self.msg)
-                    self.msg = bytearray()
-                    self.msg_done = False
+        if axis2 != 0:
+            self.joint = 0xA2
+            if(axis2 > 0.5):
+                msg1 = bytearray(struct.pack("<f", 1))
+                self.msg.append(0xAA)
+                self.msg.append(self.joint)
+                for b in msg1:
+                    self.msg.append(b)
+                self.msg_done = True
+            elif(axis2 < -0.5):
+                msg1 = bytearray(struct.pack("<f", -1))
+                self.msg.append(0xAA)
+                self.msg.append(self.joint)
+                for b in msg1:
+                    self.msg.append(b)
+                self.msg_done = True
+            if (self.msg_done):
+                self.ser.write(self.msg)
+                self.msg = bytearray()
+                self.msg_done = False
 
-            if axis3 != 0:
-                self.joint = 0xA3
-                if(axis3 > 0.1):
-                    msg1 = bytearray(struct.pack("<f", 1))
-                    self.msg.append(0xAA)
-                    self.msg.append(self.joint)
-                    self.fake_yara_angles[2] += math.radians(1)
-                    for b in msg1:
-                        self.msg.append(b)
-                    self.msg_done = True
-                elif(axis3 < -0.1):
-                    msg1 = bytearray(struct.pack("<f", -1))
-                    self.msg.append(0xAA)
-                    self.msg.append(self.joint)
-                    self.fake_yara_angles[2] += math.radians(-1)
-                    for b in msg1:
-                        self.msg.append(b)
-                    self.msg_done = True
-                if (self.msg_done):
-                    self.ser.write(self.msg)
-                    self.msg = bytearray()
-                    self.msg_done = False
+        if axis3 != 0:
+            self.joint = 0xA3
+            if(axis3 > 0.1):
+                msg1 = bytearray(struct.pack("<f", 1))
+                self.msg.append(0xAA)
+                self.msg.append(self.joint)
+                for b in msg1:
+                    self.msg.append(b)
+                self.msg_done = True
+            elif(axis3 < -0.1):
+                msg1 = bytearray(struct.pack("<f", -1))
+                self.msg.append(0xAA)
+                self.msg.append(self.joint)
+                for b in msg1:
+                    self.msg.append(b)
+                self.msg_done = True
+            if (self.msg_done):
+                self.ser.write(self.msg)
+                self.msg = bytearray()
+                self.msg_done = False
 
-            if axis4 != 0:
-                self.joint = 0xA4
-                if(axis4 > 0.8):
-                    msg1 = bytearray(struct.pack("<f", 1))
-                    self.msg.append(0xAA)
-                    self.msg.append(self.joint)
-                    self.fake_yara_angles[3] += math.radians(1)
-                    for b in msg1:
-                        self.msg.append(b)
-                    self.msg_done = True
-                elif(axis4 < -0.8):
-                    msg1 = bytearray(struct.pack("<f", -1))
-                    self.msg.append(0xAA)
-                    self.msg.append(self.joint)
-                    self.fake_yara_angles[3] += math.radians(-1)
-                    for b in msg1:
-                        self.msg.append(b)
-                    self.msg_done = True
-                if (self.msg_done):
-                    self.ser.write(self.msg)
-                    self.msg = bytearray()
-                    self.msg_done = False
+        if axis4 != 0:
+            self.joint = 0xA4
+            if(axis4 > 0.8):
+                msg1 = bytearray(struct.pack("<f", 1))
+                self.msg.append(0xAA)
+                self.msg.append(self.joint)
+                for b in msg1:
+                    self.msg.append(b)
+                self.msg_done = True
+            elif(axis4 < -0.8):
+                msg1 = bytearray(struct.pack("<f", -1))
+                self.msg.append(0xAA)
+                self.msg.append(self.joint)
+                for b in msg1:
+                    self.msg.append(b)
+                self.msg_done = True
+            if (self.msg_done):
+                self.ser.write(self.msg)
+                self.msg = bytearray()
+                self.msg_done = False
 
-            if axis5_cw > 0 or axis5_ccw > 0:
-                self.joint = 0xA5
-                if(axis5_cw > 0):
-                    msg1 = bytearray(struct.pack("<f", 1))
-                    self.msg.append(0xAA)
-                    self.msg.append(self.joint)
-                    self.fake_yara_angles[4] += math.radians(1)
-                    for b in msg1:
-                        self.msg.append(b)
-                    self.msg_done = True
-                elif(axis5_ccw > 0):
-                    msg1 = bytearray(struct.pack("<f", -1))
-                    self.msg.append(0xAA)
-                    self.msg.append(self.joint)
-                    self.fake_yara_angles[4] += math.radians(-1)
-                    for b in msg1:
-                        self.msg.append(b)
-                    self.msg_done = True
-                if (self.msg_done):
-                    self.ser.write(self.msg)
-                    self.msg = bytearray()
-                    self.msg_done = False
+        if axis5_cw > 0 or axis5_ccw > 0:
+            self.joint = 0xA5
+            if(axis5_cw > 0):
+                msg1 = bytearray(struct.pack("<f", 1))
+                self.msg.append(0xAA)
+                self.msg.append(self.joint)
+                for b in msg1:
+                    self.msg.append(b)
+                self.msg_done = True
+            elif(axis5_ccw > 0):
+                msg1 = bytearray(struct.pack("<f", -1))
+                self.msg.append(0xAA)
+                self.msg.append(self.joint)
+                for b in msg1:
+                    self.msg.append(b)
+                self.msg_done = True
+            if (self.msg_done):
+                self.ser.write(self.msg)
+                self.msg = bytearray()
+                self.msg_done = False
+        
+        msg = bytearray()
+        msg1 = bytearray(struct.pack("<f", 1))
+        msg.append(0xAD)
+        msg.append(0xAD)
+
+        for b in msg1:
+            msg.append(b)
+        self.ser.write(msg)
+
+        ret_msg = self.ser.read(20)
+        arr = array.array('f', ret_msg)
+        arr.tolist()
+        arr.tolist()
+
+        if(self.use_joystick and not self.executing_trajectory):
+            self.fake_yara_angles[0] = math.radians(arr[0])
+            self.fake_yara_angles[1] = math.radians(arr[1])
+            self.fake_yara_angles[2] = math.radians(arr[2])
+            self.fake_yara_angles[3] = math.radians(arr[3])
+            self.fake_yara_angles[4] = math.radians(arr[4])
 
     def timer_callback(self):        
         now = self.get_clock().now()
