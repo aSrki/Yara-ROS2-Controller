@@ -259,21 +259,21 @@ class RobotStatePublisher(Node):
                 self.msg = bytearray()
                 self.msg_done = False
         
-        msg = bytearray()
-        msg1 = bytearray(struct.pack("<f", 1))
-        msg.append(0xAD)
-        msg.append(0xAD)
-
-        for b in msg1:
-            msg.append(b)
-        self.ser.write(msg)
-
-        ret_msg = self.ser.read(20)
-        arr = array.array('f', ret_msg)
-        arr.tolist()
-        arr.tolist()
-
         if(self.use_joystick and not self.executing_trajectory):
+            msg = bytearray()
+            msg1 = bytearray(struct.pack("<f", 1))
+            msg.append(0xAD)
+            msg.append(0xAD)
+
+            for b in msg1:
+                msg.append(b)
+            self.ser.write(msg)
+
+            ret_msg = self.ser.read(20)
+            arr = array.array('f', ret_msg)
+            arr.tolist()
+            arr.tolist()
+
             self.fake_yara_angles[0] = math.radians(arr[0])
             self.fake_yara_angles[1] = math.radians(arr[1])
             self.fake_yara_angles[2] = math.radians(arr[2])

@@ -14,7 +14,7 @@
     <visual>
     <origin rpy="0 0 0" xyz="0.0302686 0.015353 0.06"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link0.stl"/>
+        <mesh filename="package://yara_description/meshes/Link0.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
@@ -24,7 +24,7 @@
     <collision>
     <origin rpy="0 0 0" xyz="0.0302686 0.015353 0.06"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link0.stl"/>
+        <mesh filename="package://yara_description/meshes/Link0.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
@@ -44,7 +44,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0302686 0.015353 0"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link1.stl"/>
+        <mesh filename="package://yara_description/meshes/Link1.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
@@ -54,7 +54,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0302686 0.015353 0"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link1.stl"/>
+        <mesh filename="package://yara_description/meshes/Link1.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
@@ -74,7 +74,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.07 0 0"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link2.stl"/>
+        <mesh filename="package://yara_description/meshes/Link2.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
@@ -84,7 +84,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="-0.07 0 0"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link2.stl"/>
+        <mesh filename="package://yara_description/meshes/Link2.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
@@ -104,7 +104,7 @@
     <visual>
       <origin rpy="0 0 0" xyz="0.0558536 0.0195 -0.231049"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link3.stl"/>
+        <mesh filename="package://yara_description/meshes/Link3.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
@@ -114,7 +114,7 @@
     <collision>
       <origin rpy="0 0 0" xyz="0.0558536 0.0195 -0.231049"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link3.stl"/>
+        <mesh filename="package://yara_description/meshes/Link3.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
@@ -134,7 +134,7 @@
     <visual>
       <origin rpy="0 0 1.5707963" xyz="0 0.003 -0.031"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link4.stl"/>
+        <mesh filename="package://yara_description/meshes/Link4.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
@@ -144,7 +144,7 @@
     <collision>
       <origin rpy="0 0 1.5707963" xyz="0 0.003 -0.031"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link4.stl"/>
+        <mesh filename="package://yara_description/meshes/Link4.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
@@ -164,7 +164,7 @@
     <visual>
       <origin rpy="0 0 1.5707963" xyz="0 0 -0.03"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link5.stl"/>
+        <mesh filename="package://yara_description/meshes/Link5.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
@@ -174,7 +174,7 @@
     <collision>
       <origin rpy="0 0 1.5707963" xyz="0 0 -0.03"/>
       <geometry>
-        <mesh filename="file:///home/srki/yara_ws/src/yara_description/meshes/Link5.stl"/>
+        <mesh filename="package://yara_description/meshes/Link5.stl"/>
       </geometry>
       <material name="yara_white">
         <color rgba="1 1 1 1"/>
