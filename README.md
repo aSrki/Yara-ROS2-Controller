@@ -14,3 +14,9 @@ After succesfull `colcon build`, run command `source install/setup.bash`.<br />
 Finally run command `ros2 launch yara_driver yara_no_rviz.launch.py joystick:=False hardware:=False`.<br />
 ROS2 parameters `joystick` is used if you want to move the arm manually with joystick.<br />
 ROS2 parameters `hardware` is used if you want to run the code on the real hardware of the robot.
+
+Requirements:
+   - sudo apt-get update
+   - sudo apt-get upgrade
+   - sudo apt install ros-jazzy-moveit
+   - sudo apt-get install libompl-dev ompl-demos
