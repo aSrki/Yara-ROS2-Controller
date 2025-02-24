@@ -18,6 +18,7 @@ ROS2 parameters `hardware` is used if you want to run the code on the real hardw
 Requirements:
    - `sudo apt-get update`
    - `sudo apt-get upgrade`
+   - `pip3 install pygame`
    - `sudo apt install ros-jazzy-moveit`
    - `sudo apt-get install libompl-dev ompl-demos`
    - `sudo apt-get install ros-jazzy-moveit-planners-chomp`
