@@ -16,7 +16,9 @@ ROS2 parameters `joystick` is used if you want to move the arm manually with joy
 ROS2 parameters `hardware` is used if you want to run the code on the real hardware of the robot.
 
 Requirements:
-   - sudo apt-get update
-   - sudo apt-get upgrade
-   - sudo apt install ros-jazzy-moveit
-   - sudo apt-get install libompl-dev ompl-demos
+   - `sudo apt-get update`
+   - `sudo apt-get upgrade`
+   - `sudo apt install ros-jazzy-moveit`
+   - `sudo apt-get install libompl-dev ompl-demos`
+   - `sudo apt-get install ros-jazzy-moveit-planners-chomp`
+
