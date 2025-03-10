@@ -8,12 +8,12 @@ ROS2 distribution used in this project is ROS2 Jazzy.<br />
 </p>
 YARA harware is not necessary in order to run, and try out, its ROS2 controller.
 In ordere to use this code, you need to clone this repo, and cloned code represents ROS2 src folder.<br />
-For cloning use command : `git clone https://github.com/aSrki/ProjectYaraROS2`.<br />
-After succesfull clone, run command `colcon build`.<br />
-After succesfull `colcon build`, run command `source install/setup.bash`.<br />
-Finally run command `ros2 launch yara_driver yara_no_rviz.launch.py joystick:=False hardware:=False`.<br />
-ROS2 parameters `joystick` is used if you want to move the arm manually with joystick.<br />
-ROS2 parameters `hardware` is used if you want to run the code on the real hardware of the robot.
+For cloning use command : <code>git clone https://github.com/aSrki/ProjectYaraROS2</code>.<br />
+After succesfull clone, run command <code>colcon build</code>.<br />
+After succesfull <code>colcon build</code>, run command <code>source install/setup.bash</code>.<br />
+Finally run command <code>ros2 launch yara_driver yara_no_rviz.launch.py joystick:=False hardware:=False</code>.<br />
+ROS2 parameters <code>joystick</code> is used if you want to move the arm manually with joystick.<br />
+ROS2 parameters <code>hardware</code> is used if you want to run the code on the real hardware of the robot.
 
 Requirements:
    - `sudo apt-get update`
